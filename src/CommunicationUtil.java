@@ -40,11 +40,11 @@ public class CommunicationUtil {
     } catch (ClassNotFoundException e) {
       e.printStackTrace();
     } finally {
-      try {
-        ois.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+//      try {
+//        ois.close();
+//      } catch (IOException e) {
+//        e.printStackTrace();
+//      }
     }
     return msg;
   }
@@ -60,11 +60,11 @@ public class CommunicationUtil {
     } catch (IOException e) {
       e.printStackTrace();
     } finally {
-      try {
-        out.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+//      try {
+//        out.close();
+//      } catch (IOException e) {
+//        e.printStackTrace();
+//      }
     }
   }
 
