@@ -28,7 +28,7 @@ public class DispatherMessageHandler extends MessageHandler {
     Object returnValue = null;
     if (refObj != null) {
       try {
-        Class interfaceClass = Class.forName(msg.getInterfaceStr());
+        Class interfaceClass = this.getClass();
         Object[] args = msg.getArguments();
 
         // generate argument type array
@@ -39,8 +39,6 @@ public class DispatherMessageHandler extends MessageHandler {
 
         Method method = interfaceClass.getMethod(msg.getMethodStr(), argsclasses);
         returnValue = method.invoke(refObj, argsclasses);
-      } catch (ClassNotFoundException e) {
-        returnValue = new RemoteException(e.getMessage());
       } catch (SecurityException e) {
         returnValue = new RemoteException(e.getMessage());
       } catch (NoSuchMethodException e) {
