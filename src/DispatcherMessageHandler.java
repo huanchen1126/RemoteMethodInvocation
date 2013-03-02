@@ -3,11 +3,14 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.*;
 import java.net.Socket;
 
-public class DispatherMessageHandler extends MessageHandler {
+/**
+ * The class handles each remote method invocation call request.
+ */
+public class DispatcherMessageHandler extends MessageHandler {
   
   public Dispatcher dispatcher;
   
-  public DispatherMessageHandler(Socket s, Dispatcher dp) {
+  public DispatcherMessageHandler(Socket s, Dispatcher dp) {
     super(s);
     
     this.dispatcher = dp;
@@ -28,11 +31,17 @@ public class DispatherMessageHandler extends MessageHandler {
     
     InvocationRequestMessage msg = (InvocationRequestMessage) rawmsg;
     
+    // get the actual reference of the request object
     Object refObj = this.dispatcher.getReference(msg.getRefObjId());
+    
     Object returnValue = null;
+    
     if (refObj != null) {
       try {
+        // get the class of the request interface
         Class<?> interfaceClass = msg.getInterfaceClass();
+        
+        // get the arguments for the method invocation
         Object[] args = msg.getArguments();
 
         // generate argument type array
@@ -41,17 +50,7 @@ public class DispatherMessageHandler extends MessageHandler {
           argsclasses[i] = args[i].getClass();
         }
         
-        System.out.println(interfaceClass.getName() + " " + msg.getMethodStr());
-        for( Class<?> c : argsclasses) {
-          System.out.println(c.getName());
-        }
-        
-        for( Method m : interfaceClass.getMethods()) {
-          System.out.println(m.getName());
-          for (Class c : m.getParameterTypes())
-            System.out.println(c.getName());
-        }
-
+        // invoke this method
         Method method = interfaceClass.getMethod(msg.getMethodStr(), argsclasses);
         returnValue = method.invoke(refObj, args);
       } catch (SecurityException e) {
@@ -66,15 +65,14 @@ public class DispatherMessageHandler extends MessageHandler {
         returnValue = new RemoteException(e.getMessage());
       }
     }else {
-      if (Main.DEBUG) {
-        System.out.println("Object not found.");
-      }
       returnValue = new RemoteException("Object not found.");
     }
     
+    // patch the return value into the response message
     InvocationResponseMessage resmsg = new InvocationResponseMessage(returnValue);
     
     try {
+      // send back the response message
       new ObjectOutputStream(this.socket.getOutputStream()).writeObject(resmsg);
     } catch (IOException e) {
       e.printStackTrace();
