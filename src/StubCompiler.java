@@ -6,14 +6,10 @@ import java.net.UnknownHostException;
 
 public class StubCompiler {
 
-  public static final String registryIp = "127.0.0.1";
-
-  public static final int registryPort = 55556;
-
   public static Object compile(String refId, Class objClass) {
     // 1. send object request message to get the ror first
-    RemoteReferenceMessage response = StubCompiler.requestRemoteReference(refId, registryIp,
-            registryPort);
+    RemoteReferenceMessage response = StubCompiler.requestRemoteReference(refId,
+            Dispatcher.registryIp, Dispatcher.registryPort);
 
     // 2. create a stub proxy according to the ror
     return StubCompiler.createStub(response, objClass);
@@ -77,21 +73,9 @@ class StubInvocationHandler implements InvocationHandler {
 
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-/********** for test ******************/
-//    System.out.println("id: " + ror.getId());
-//    System.out.println("method: " + method.getName());
-//    System.out.println("method return type: " + method.getReturnType().getName());
-//    System.out.println("DeclaringClass: " + method.getDeclaringClass());
-//    
-//    for(Object obj : args) {
-//      System.out.println("Args : " + obj.getClass().getName());
-//    }
-//    
-//    return null;
-    /****************************************/
     InvocationRequestMessage request = new InvocationRequestMessage(ror.getId(), method.getName(),
             method.getReturnType().getName(), method.getDeclaringClass(), args);
-    
+
     if (Main.DEBUG) {
       System.out.println("Made a proxy function call: ");
       System.out.println("id: " + ror.getId());
@@ -106,13 +90,15 @@ class StubInvocationHandler implements InvocationHandler {
 
     Socket socket = new Socket(InetAddress.getByName(ror.getIp()), ror.getPort());
     CommunicationUtil.send(socket, request);
-    InvocationResponseMessage response = (InvocationResponseMessage) CommunicationUtil.receive(socket);
-    
-    if (response == null) return null;
-    
+    InvocationResponseMessage response = (InvocationResponseMessage) CommunicationUtil
+            .receive(socket);
+
+    if (response == null)
+      return null;
+
     if (response.isException()) {
       throw (RemoteException) response.getReturnObject();
-    }else {
+    } else {
       return response.getReturnObject();
     }
   }
