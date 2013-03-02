@@ -12,6 +12,7 @@ public class Registry implements Runnable {
 
   public Registry(int port) {
     this.ip = CommunicationUtil.getLocalIPAddress();
+    System.out.println(ip);
     this.port = port;
     this.table = new HashMap<String, RemoteReferenceMessage>();
   }
@@ -40,5 +41,8 @@ public class Registry implements Runnable {
         e.printStackTrace();
       }
     }
+  }
+  public static void main(String[] args){
+    new Thread(new Registry(1234)).start();
   }
 }
