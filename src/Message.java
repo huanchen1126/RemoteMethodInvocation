@@ -1,4 +1,6 @@
+import java.io.Serializable;
 
-public interface Message {
+
+public interface Message extends Serializable {
 
 }
