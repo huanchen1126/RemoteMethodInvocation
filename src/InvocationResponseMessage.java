@@ -10,6 +10,8 @@ public class InvocationResponseMessage implements Message {
   }
 
   public boolean isException() {
+    if (returnObject == null) return false;
+    
     return (this.returnObject.getClass().getName().compareTo(RemoteException.class.getName()) == 0);
   }
 }
