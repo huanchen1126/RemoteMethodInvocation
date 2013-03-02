@@ -7,7 +7,7 @@ public class Registry implements Runnable {
   private String ip;
 
   private int port;
-  
+  /* the table which maps object id to ror */
   public HashMap<String, RemoteReferenceMessage> table = null;
 
   public Registry(int port) {
@@ -24,6 +24,7 @@ public class Registry implements Runnable {
     boolean listening = true;
     try {
       serverSocket = new ServerSocket(this.port);
+      /* get a new request and start a new handler thread */
       while (listening) {
         Socket socket = serverSocket.accept();
         new Thread(new RegistryHandler(socket, this)).start();
