@@ -2,15 +2,22 @@ import java.io.IOException;
 import java.net.*;
 import java.util.*;
 
+/**
+ * This class is in charge of accepting remote method invocation request, executing the method and
+ * sending back the return value.
+ */
 public class Dispatcher implements Runnable {
-  // the referenced objects table in this remote server
+  // the referenced objects table
   private Map<String, Object> objectTable;
 
-  public static final int port = 55555;
+  // listening port for remote method invocation request
+  public static int port = 0;
 
-  public static final String registryIp = "128.237.123.158";
+  // the ip address of the registry server
+  public static String registryIp = "";
 
-  public static final int registryPort = 1234;
+  // the port of the registry server
+  public static int registryPort = 0;
 
   public Dispatcher() {
     this.objectTable = new TreeMap<String, Object>();
@@ -18,6 +25,9 @@ public class Dispatcher implements Runnable {
     this.init();
   }
 
+  /**
+   * initialize several object for remove method invocation
+   */
   private void init() {
     TestInterface testobj = new TestInterface() {
 
@@ -57,7 +67,7 @@ public class Dispatcher implements Runnable {
           System.err.println("Accept a new invocation request socket.");
         }
 
-        (new Thread(new DispatherMessageHandler(socket, this))).start();
+        (new Thread(new DispatcherMessageHandler(socket, this))).start();
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -73,6 +83,12 @@ public class Dispatcher implements Runnable {
     }
   }
 
+  /**
+   * find the object reference in the table
+   * 
+   * @param id
+   * @return object, if the reference id exist in the table; null, otherwise.
+   */
   public Object getReference(String id) {
     if (id == null)
       return null;
@@ -80,6 +96,15 @@ public class Dispatcher implements Runnable {
     return this.objectTable.get(id);
   }
 
+  /**
+   * Register an object in the registry.
+   * 
+   * @param objId
+   *          the id for the object
+   * @param interfaces
+   *          the interfaces this object implements
+   * @return whether the object has been successfully registered.
+   */
   private boolean registerObject(String objId, Class[] interfaces) {
     if (objId == null)
       return false;
@@ -88,15 +113,16 @@ public class Dispatcher implements Runnable {
       Socket socket = new Socket(InetAddress.getByName(Dispatcher.registryIp),
               Dispatcher.registryPort);
 
+      // generate a request message
       RemoteReferenceMessage request = new RemoteReferenceMessage(objId, socket.getLocalAddress()
               .getHostAddress(), this.port, interfaces);
+      
+      // send this request
       CommunicationUtil.send(socket, request);
+      
+      // block waiting for the response message
       ObjectRegisterAckMessage response = (ObjectRegisterAckMessage) CommunicationUtil
               .receive(socket);
-
-      if (Main.DEBUG) {
-        System.out.println("Register Status: " + response.isSuccess());
-      }
 
       if (response == null)
         return false;
@@ -111,6 +137,14 @@ public class Dispatcher implements Runnable {
     return false;
   }
 
+  /**
+   * Add an object into the object reference table
+   * 
+   * @param id
+   *          the object reference id
+   * @param obj
+   *          the object
+   */
   private void addObject(String id, Object obj) {
     if (id == null || obj == null)
       return;
@@ -119,15 +153,17 @@ public class Dispatcher implements Runnable {
   }
 
   public static void main(String[] args) {
-    new Thread(new Dispatcher()).start();
+    if (args.length != 3) {
+      System.err.println("Usage: Dispatcher <dispatcher_port> <registry_ip> <registery_port>");
+      return;
+    }
 
-    // RemoteReferenceMessage res = StubCompiler.requestRemoteReference("testobj",
-    // "128.237.123.158", 1234);
-    // if (res == null) {
-    // System.out.println("response null");
-    // }else {
-    // System.out.println("response not null");
-    // }
+    Dispatcher.port = Integer.parseInt(args[0]);
+    Dispatcher.registryIp = args[1];
+    Dispatcher.registryPort = Integer.parseInt(args[2]);
+
+    // start the listening thread
+    new Thread(new Dispatcher()).start();
 
     TestInterface a = (TestInterface) StubCompiler.compile("testobj", TestInterface.class);
 
