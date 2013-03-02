@@ -15,7 +15,7 @@ public class Dispatcher implements Runnable {
   }
 
   private void init() {
-    // TODO : initialize some remote object instances
+    
   }
 
   @Override
@@ -54,6 +54,29 @@ public class Dispatcher implements Runnable {
     if (id == null) return null;
     
     return this.objectTable.get(id);
+  }
+  
+  private boolean registerObject(String objId, String ip, int port, Class[] interfaces) {
+    if (objId == null) return false;
+    
+    try {
+      Socket socket = new Socket(InetAddress.getByName(ip), port);
+     
+      RemoteReferenceMessage request = new RemoteReferenceMessage(ip, port, interfaces);
+      CommunicationUtil.send(socket, request);
+      ObjectRegisterAckMessage response = (ObjectRegisterAckMessage) CommunicationUtil.receive(socket);
+      
+      if (response == null)
+        return false;
+      else
+        return response.isSuccess();
+    } catch (UnknownHostException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
+    return false;
   }
   
   private void addObject(String id, Object obj) {
