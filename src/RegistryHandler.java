@@ -17,8 +17,8 @@ public class RegistryHandler extends MessageHandler {
     /* get the message type */
     String msgType = msg.getClass().getName();
     /* handle the message */
-    if (msgType.equals("ObjectRegisterMessage")) {
-      handleObjectRegisterMessage((ObjectRegisterMessage) msg);
+    if (msgType.equals("RemoteReferenceMessage")) {
+      handleObjectRegisterMessage((RemoteReferenceMessage) msg);
     } else if (msgType.equals("ObjectRequestMessage")) {
       handleObjectRequestMessage((ObjectRequestMessage) msg);
     } else {
@@ -32,18 +32,18 @@ public class RegistryHandler extends MessageHandler {
     }
   }
 
-  public void handleObjectRegisterMessage(ObjectRegisterMessage msg) {
+  public void handleObjectRegisterMessage(RemoteReferenceMessage msg) {
     if (context.table.containsKey(msg.getId())) {
       CommunicationUtil.send(this.socket, new ObjectRegisterAckMessage(false));
     } else {
-      context.table.put(msg.getId(), msg.getRor());
+      context.table.put(msg.getId(), msg);
       CommunicationUtil.send(this.socket, new ObjectRegisterAckMessage(true));
     }
   }
 
   public void handleObjectRequestMessage(ObjectRequestMessage msg) {
     String id = msg.getId();
-    /*TODO: what if not exist in the table */
+    /* TODO: what if not exist in the table */
     CommunicationUtil.send(this.socket, this.context.table.get(id));
   }
 
