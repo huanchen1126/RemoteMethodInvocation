@@ -1,10 +1,6 @@
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import org.cmu.ds2013s.ManagerContext;
-import org.cmu.ds2013s.ProcessManager;
 
 public class Registry implements Runnable {
   private String ip;
@@ -31,14 +27,6 @@ public class Registry implements Runnable {
     } catch (IllegalArgumentException e) {
       e.printStackTrace();
     } catch (SecurityException e) {
-      e.printStackTrace();
-    } catch (InstantiationException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
-    } catch (InvocationTargetException e) {
-      e.printStackTrace();
-    } catch (NoSuchMethodException e) {
       e.printStackTrace();
     } finally {
       try {
