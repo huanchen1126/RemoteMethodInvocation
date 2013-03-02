@@ -1,4 +1,6 @@
 public class RemoteReferenceMessage implements Message {
+  String id;
+
   String ip;
 
   int port;
@@ -9,6 +11,14 @@ public class RemoteReferenceMessage implements Message {
     this.ip = ip;
     this.port = port;
     this.interfaces = interfaces;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public String getIp() {
