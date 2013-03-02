@@ -10,13 +10,13 @@ public class StubCompiler {
 
   public static final int registryPort = 55556;
 
-  public static Object compile(String refId) {
+  public static Object compile(String refId, Class objClass) {
     // 1. send object request message to get the ror first
     RemoteReferenceMessage response = StubCompiler.requestRemoteReference(refId, registryIp,
             registryPort);
 
     // 2. create a stub proxy according to the ror
-    return StubCompiler.createStub(response);
+    return StubCompiler.createStub(response, objClass);
   }
 
   public static RemoteReferenceMessage requestRemoteReference(String refId, String ip, int port) {
@@ -47,7 +47,7 @@ public class StubCompiler {
     return null;
   }
 
-  public static Object createStub(RemoteReferenceMessage ror) {
+  public static Object createStub(RemoteReferenceMessage ror, Class objClass) {
     if (ror == null)
       return null;
 
@@ -60,10 +60,10 @@ public class StubCompiler {
     }
 
     // compile the stub to call remote method
-    Object result = Proxy.newProxyInstance(Object.class.getClassLoader(), interfaces,
+    Object result = Proxy.newProxyInstance(objClass.getClassLoader(), interfaces,
             new StubInvocationHandler(ror));
 
-    return null;
+    return result;
   }
 }
 
@@ -77,8 +77,32 @@ class StubInvocationHandler implements InvocationHandler {
 
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+/********** for test ******************/
+//    System.out.println("id: " + ror.getId());
+//    System.out.println("method: " + method.getName());
+//    System.out.println("method return type: " + method.getReturnType().getName());
+//    System.out.println("DeclaringClass: " + method.getDeclaringClass());
+//    
+//    for(Object obj : args) {
+//      System.out.println("Args : " + obj.getClass().getName());
+//    }
+//    
+//    return null;
+    /****************************************/
     InvocationRequestMessage request = new InvocationRequestMessage(ror.getId(), method.getName(),
             method.getReturnType().getName(), method.getDeclaringClass(), args);
+    
+    if (Main.DEBUG) {
+      System.out.println("Made a proxy function call: ");
+      System.out.println("id: " + ror.getId());
+      System.out.println("method: " + method.getName());
+      System.out.println("method return type: " + method.getReturnType().getName());
+      System.out.println("DeclaringClass: " + method.getDeclaringClass());
+
+      for (Object obj : args) {
+        System.out.println("Args : " + obj.getClass().getName());
+      }
+    }
 
     Socket socket = new Socket(InetAddress.getByName(ror.getIp()), ror.getPort());
     CommunicationUtil.send(socket, request);

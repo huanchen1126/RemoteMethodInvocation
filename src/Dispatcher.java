@@ -62,7 +62,7 @@ public class Dispatcher implements Runnable {
     try {
       Socket socket = new Socket(InetAddress.getByName(ip), port);
      
-      RemoteReferenceMessage request = new RemoteReferenceMessage(ip, port, interfaces);
+      RemoteReferenceMessage request = new RemoteReferenceMessage(objId, ip, port, interfaces);
       CommunicationUtil.send(socket, request);
       ObjectRegisterAckMessage response = (ObjectRegisterAckMessage) CommunicationUtil.receive(socket);
       

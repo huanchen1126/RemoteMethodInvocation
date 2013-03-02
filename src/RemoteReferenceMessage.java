@@ -7,7 +7,8 @@ public class RemoteReferenceMessage implements Message {
 
   Class[] interfaces = null;
 
-  public RemoteReferenceMessage(String ip, int port, Class[] interfaces) {
+  public RemoteReferenceMessage(String rid, String ip, int port, Class[] interfaces) {
+    this.id = rid;
     this.ip = ip;
     this.port = port;
     this.interfaces = interfaces;
