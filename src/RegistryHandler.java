@@ -18,8 +18,13 @@ public class RegistryHandler extends MessageHandler {
     String msgType = msg.getClass().getName();
     /* handle the message */
     if (msgType.equals("RemoteReferenceMessage")) {
-      handleObjectRegisterMessage((RemoteReferenceMessage) msg);
+      RemoteReferenceMessage rrm = (RemoteReferenceMessage) msg;
+      System.out.println("Received object registration from dispatcher ip:" + rrm.ip + ",port:"
+              + rrm.port);
+      handleObjectRegisterMessage(rrm);
     } else if (msgType.equals("ObjectRequestMessage")) {
+      ObjectRequestMessage orm = (ObjectRequestMessage) msg;
+      System.out.println("Received object registration from client for object:" + orm.getId());
       handleObjectRequestMessage((ObjectRequestMessage) msg);
     } else {
       throw new RuntimeException("Illegal message time for registry");
@@ -33,12 +38,13 @@ public class RegistryHandler extends MessageHandler {
   }
 
   /**
-   *  handler register request from dispatcher, send back ack 
-   *  
-   *  */
+   * handler register request from dispatcher, send back ack
+   * 
+   * */
   public void handleObjectRegisterMessage(RemoteReferenceMessage msg) {
     /* if already have a object with the same id in table */
     if (registry.table.containsKey(msg.getId())) {
+      System.out.println("Obejct id:" + msg.getId() + " already exists");
       CommunicationUtil.send(this.socket, new ObjectRegisterAckMessage(false));
     } else {
       registry.table.put(msg.getId(), msg);
@@ -47,8 +53,8 @@ public class RegistryHandler extends MessageHandler {
   }
 
   /**
-   *  handle object request from client, send back ror 
-   *  */
+   * handle object request from client, send back ror
+   * */
   public void handleObjectRequestMessage(ObjectRequestMessage msg) {
     String id = msg.getId();
     CommunicationUtil.send(this.socket, this.registry.table.get(id));
