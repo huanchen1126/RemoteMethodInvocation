@@ -48,13 +48,13 @@ a local object.
 This RemoteReferenceMessage contains the metadata of each registered object in the Registry
 Service. Each entry contains the following fields:
 
-> "refid, the reference of the remote object."
+> * "refid, the reference of the remote object."
 
-> "ip, the ip address of the progress where the actual object locates."
+> * "ip, the ip address of the progress where the actual object locates."
 
-> "port, the port number of the progress where the actual port locates."
+> * "port, the port number of the progress where the actual port locates."
 
-> "interfaces[], a array which records all the interfaces the object implements."
+> * "interfaces[], a array which records all the interfaces the object implements."
 
 And, of course, the interfaces[] array must contain one element which is "RemoteObject".
 
