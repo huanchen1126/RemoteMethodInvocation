@@ -103,16 +103,20 @@ InvocationRequestMessage, the Dispatcher would look up this table, get the actua
 argument list using the object reference. Then it would wrap the return result, which could be either the actual result or just a 
 RemoteException, into an InvocationResponseMessage, and send this message back to the client.
 
-##Test Instances
+## 3. Test Instances
 Two interfaces are provided:
-TestInterface1 has one method Integer add(Integer a, Integer b);
-TestInterface2 has one method Integer addAll(Integer[] args);
+
+* TestInterface1 has one method Integer add(Integer a, Integer b);
+
+* TestInterface2 has one method Integer addAll(Integer[] args);
 
 TestClass implements the above two interfaces as well as the interface RemoteObject.
-add(Integer a, Integer b) returns the sum of the two arguments.
-addAll(Integer[] args) returns the sum of the integers in the array argument.
 
-##How to run
+* add(Integer a, Integer b) returns the sum of the two arguments.
+
+* addAll(Integer[] args) returns the sum of the integers in the array argument.
+
+## 4. How to run
 
 First, compile the code at the root directory of the project by typing:
 	
