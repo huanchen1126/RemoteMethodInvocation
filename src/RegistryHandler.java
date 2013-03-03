@@ -38,7 +38,10 @@ public class RegistryHandler extends MessageHandler {
     }
   }
 
-  /* handler register request from dispatcher, send back ack */
+  /**
+   *  handler register request from dispatcher, send back ack 
+   *  
+   *  */
   public void handleObjectRegisterMessage(RemoteReferenceMessage msg) {
     if (Main.DEBUG) {
       System.out.println("received ror : " + msg.id + " " + msg.ip + " " + msg.port + " "
@@ -53,7 +56,9 @@ public class RegistryHandler extends MessageHandler {
     }
   }
 
-  /* handle object request from client, send back ror */
+  /**
+   *  handle object request from client, send back ror 
+   *  */
   public void handleObjectRequestMessage(ObjectRequestMessage msg) {
     String id = msg.getId();
     CommunicationUtil.send(this.socket, this.registry.table.get(id));

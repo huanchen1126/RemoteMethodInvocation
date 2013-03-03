@@ -29,19 +29,7 @@ public class Dispatcher implements Runnable {
    * initialize several object for remove method invocation
    */
   private void init() {
-    TestInterface testobj = new TestInterface() {
-
-      @Override
-      public void functionA(Integer a, Integer b) {
-        System.out.println(a + "-" + b);
-      }
-
-      @Override
-      public void functionB(Integer a) {
-        System.out.println(a);
-      }
-
-    };
+    TestClass testobj = new TestClass();
 
     if (this.registerObject("testobj", testobj)) {
       this.addObject("testobj", testobj);
@@ -179,12 +167,5 @@ public class Dispatcher implements Runnable {
     // start the listening thread
     new Thread(new Dispatcher()).start();
 
-    TestInterface a = (TestInterface) StubCompiler.compile("testobj", TestInterface.class);
-
-    if (a == null) {
-      System.out.println("a null");
-    } else {
-      a.functionA(1, 2);
-    }
   }
 }

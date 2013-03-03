@@ -4,15 +4,15 @@ import java.net.Socket;
 import java.util.HashMap;
 
 public class Registry implements Runnable {
-  private String ip;
+  public static String ip;
 
-  private int port;
+  public static int port;
+
   /* the table which maps object id to ror */
   public HashMap<String, RemoteReferenceMessage> table = null;
 
   public Registry(int port) {
     this.ip = CommunicationUtil.getLocalIPAddress();
-    System.out.println(ip);
     this.port = port;
     this.table = new HashMap<String, RemoteReferenceMessage>();
   }
@@ -43,7 +43,12 @@ public class Registry implements Runnable {
       }
     }
   }
-  public static void main(String[] args){
-    new Thread(new Registry(1234)).start();
+
+  public static void main(String[] args) {
+    if (args.length != 1) {
+      System.err.println("Usage: Registry <registry_port>");
+      return;
+    }
+    new Thread(new Registry(Integer.parseInt(args[0]))).start();
   }
 }
