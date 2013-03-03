@@ -6,7 +6,7 @@ import java.util.*;
 
 public class StubCompiler {
 
-  public static Map<String, RemoteReferenceMessage> rorTableCache = new TreeMap<String, RemoteReferenceMessage>();
+  public static Map<String, Object> objTableCache = new TreeMap<String, Object>();
 
   /**
    * compile a local object proxy stub
@@ -20,16 +20,19 @@ public class StubCompiler {
   public static Object compile(String refId, Class objClass, String rip, int rport) {
     RemoteReferenceMessage response = null;
 
-    if (rorTableCache.containsKey(refId)) {
-      // if the ror message has already been cached
-      response = rorTableCache.get(refId);
+    if (objTableCache.containsKey(refId)) {
+      // if the object has already been cached
+      return objTableCache.get(refId);
     } else {
       // 1. send object request message to get the ror first
       response = StubCompiler.requestRemoteReference(refId, rip, rport);
+      
+      // 2. create a stub proxy according to the ror
+      Object obj = StubCompiler.createStub(response, objClass);
+      
+      objTableCache.put(refId, obj);
+      return obj;
     }
-
-    // 2. create a stub proxy according to the ror
-    return StubCompiler.createStub(response, objClass);
   }
 
   /**
