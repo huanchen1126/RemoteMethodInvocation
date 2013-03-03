@@ -18,6 +18,7 @@ public class DispatcherMessageHandler extends MessageHandler {
 
   @Override
   public void handle() {
+    System.out.println("Handle this InvocationRequestMessage.");
     Object rawmsg = this.getMessage();
     
     if (rawmsg.getClass().getName().compareTo(InvocationRequestMessage.class.getName()) != 0) {
@@ -49,6 +50,7 @@ public class DispatcherMessageHandler extends MessageHandler {
         
         // invoke this method
         Method method = interfaceClass.getMethod(msg.getMethodStr(), argsclasses);
+        System.out.println("Invoke the requested method.");
         returnValue = method.invoke(refObj, args);
       } catch (Exception e) {
         // if the method call throw a exception, catch it here;
@@ -63,6 +65,7 @@ public class DispatcherMessageHandler extends MessageHandler {
     
     try {
       // send back the response message
+      System.out.println("Send back the result by an InvocationResponseMessage.\n");
       new ObjectOutputStream(this.socket.getOutputStream()).writeObject(resmsg);
     } catch (IOException e) {
       e.printStackTrace();

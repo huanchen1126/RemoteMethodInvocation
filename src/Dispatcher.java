@@ -49,7 +49,9 @@ public class Dispatcher implements Runnable {
       // listen for new collection
       while (listening) {
         Socket socket = serverSocket.accept();
-
+        
+        System.out.println("Receive an InvocationRequestMessage.");
+        
         (new Thread(new DispatcherMessageHandler(socket, this))).start();
       }
     } catch (IOException e) {
