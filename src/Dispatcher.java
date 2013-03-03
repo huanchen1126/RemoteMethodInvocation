@@ -50,10 +50,6 @@ public class Dispatcher implements Runnable {
       while (listening) {
         Socket socket = serverSocket.accept();
 
-        if (Main.DEBUG) {
-          System.err.println("Accept a new invocation request socket.");
-        }
-
         (new Thread(new DispatcherMessageHandler(socket, this))).start();
       }
     } catch (IOException e) {
@@ -101,8 +97,9 @@ public class Dispatcher implements Runnable {
 
     // if the object does not
     for (Class c : interfaces) {
-      if (c.equals(RemoteObject.class))
+      if (c.equals(RemoteObject.class)) {
         isRemote = true;
+      }
     }
 
     // if the object does not implement the RemoteObject interface,

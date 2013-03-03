@@ -18,14 +18,8 @@ public class RegistryHandler extends MessageHandler {
     String msgType = msg.getClass().getName();
     /* handle the message */
     if (msgType.equals("RemoteReferenceMessage")) {
-      if (Main.DEBUG) {
-        System.out.println("Received message RemoteReferenceMessage from dispatcher");
-      }
       handleObjectRegisterMessage((RemoteReferenceMessage) msg);
     } else if (msgType.equals("ObjectRequestMessage")) {
-      if (Main.DEBUG) {
-        System.out.println("Received message ObjectRequestMessage from client");
-      }
       handleObjectRequestMessage((ObjectRequestMessage) msg);
     } else {
       throw new RuntimeException("Illegal message time for registry");
@@ -43,10 +37,6 @@ public class RegistryHandler extends MessageHandler {
    *  
    *  */
   public void handleObjectRegisterMessage(RemoteReferenceMessage msg) {
-    if (Main.DEBUG) {
-      System.out.println("received ror : " + msg.id + " " + msg.ip + " " + msg.port + " "
-              + Arrays.toString(msg.interfaces));
-    }
     /* if already have a object with the same id in table */
     if (registry.table.containsKey(msg.getId())) {
       CommunicationUtil.send(this.socket, new ObjectRegisterAckMessage(false));

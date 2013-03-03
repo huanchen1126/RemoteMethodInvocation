@@ -1,5 +1,5 @@
 
-public interface TestInterface1 extends RemoteObject {
+public interface TestInterface1 {
   public Integer add(Integer a, Integer b);
   
 }

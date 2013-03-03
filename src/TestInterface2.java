@@ -1,3 +1,3 @@
-public interface TestInterface2 extends RemoteObject{
+public interface TestInterface2 {
   public Integer addAll(Integer[] args);
 }

@@ -17,7 +17,7 @@ public class StubCompiler {
    *          the request interface of the object
    * @return a object proxy stub for remote method invocation; null, if any error occur
    */
-  public static Object compile(String refId, Class objClass) {
+  public static Object compile(String refId, Class objClass, String rip, int rport) {
     RemoteReferenceMessage response = null;
 
     if (rorTableCache.containsKey(refId)) {
@@ -25,8 +25,7 @@ public class StubCompiler {
       response = rorTableCache.get(refId);
     } else {
       // 1. send object request message to get the ror first
-      response = StubCompiler.requestRemoteReference(refId, Dispatcher.registryIp,
-              Dispatcher.registryPort);
+      response = StubCompiler.requestRemoteReference(refId, rip, rport);
     }
 
     // 2. create a stub proxy according to the ror
@@ -91,9 +90,6 @@ public class StubCompiler {
 
     Class[] interfaces = ror.getInterfaces();
     if (interfaces == null || interfaces.length == 0) {
-      if (Main.DEBUG) {
-        System.err.println("No interfaces information form ROR.");
-      }
       return null;
     }
 
@@ -119,18 +115,6 @@ class StubInvocationHandler implements InvocationHandler {
     // wrap the remote method information for reflection into a request message
     InvocationRequestMessage request = new InvocationRequestMessage(ror.getId(), method.getName(),
             method.getReturnType().getName(), method.getDeclaringClass(), args);
-
-    if (Main.DEBUG) {
-      System.out.println("Made a proxy function call: ");
-      System.out.println("id: " + ror.getId());
-      System.out.println("method: " + method.getName());
-      System.out.println("method return type: " + method.getReturnType().getName());
-      System.out.println("DeclaringClass: " + method.getDeclaringClass());
-
-      for (Object obj : args) {
-        System.out.println("Args : " + obj.getClass().getName());
-      }
-    }
 
     Socket socket = new Socket(InetAddress.getByName(ror.getIp()), ror.getPort());
 

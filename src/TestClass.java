@@ -1,4 +1,4 @@
-public class TestClass implements TestInterface1, TestInterface2 {
+public class TestClass implements TestInterface1, TestInterface2, RemoteObject {
 
   @Override
   public Integer add(Integer a, Integer b) {

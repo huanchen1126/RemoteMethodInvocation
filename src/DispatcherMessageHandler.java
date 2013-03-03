@@ -23,9 +23,6 @@ public class DispatcherMessageHandler extends MessageHandler {
     if (rawmsg.getClass().getName().compareTo(InvocationRequestMessage.class.getName()) != 0) {
       // invalid message
       System.err.println("Invalid Message");
-      if (Main.DEBUG) {
-        System.err.println(rawmsg.getClass().getName() + ", " + InvocationRequestMessage.class.getName());
-      }
       return ;
     }
     
@@ -53,15 +50,8 @@ public class DispatcherMessageHandler extends MessageHandler {
         // invoke this method
         Method method = interfaceClass.getMethod(msg.getMethodStr(), argsclasses);
         returnValue = method.invoke(refObj, args);
-      } catch (SecurityException e) {
-        returnValue = new RemoteException(e.getMessage());
-      } catch (NoSuchMethodException e) {
-        returnValue = new RemoteException(e.getMessage());
-      } catch (IllegalArgumentException e) {
-        returnValue = new RemoteException(e.getMessage());
-      } catch (IllegalAccessException e) {
-        returnValue = new RemoteException(e.getMessage());
-      } catch (InvocationTargetException e) {
+      } catch (Exception e) {
+        // if the method call throw a exception, catch it here;
         returnValue = new RemoteException(e.getMessage());
       }
     }else {
