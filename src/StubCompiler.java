@@ -1,10 +1,12 @@
 import java.io.IOException;
 import java.lang.reflect.*;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.lang.reflect.Proxy;
+import java.net.*;
+import java.util.*;
 
 public class StubCompiler {
+
+  public static Map<String, RemoteReferenceMessage> rorTableCache = new TreeMap<String, RemoteReferenceMessage>();
 
   /**
    * compile a local object proxy stub
@@ -16,9 +18,16 @@ public class StubCompiler {
    * @return a object proxy stub for remote method invocation; null, if any error occur
    */
   public static Object compile(String refId, Class objClass) {
-    // 1. send object request message to get the ror first
-    RemoteReferenceMessage response = StubCompiler.requestRemoteReference(refId,
-            Dispatcher.registryIp, Dispatcher.registryPort);
+    RemoteReferenceMessage response = null;
+
+    if (rorTableCache.containsKey(refId)) {
+      // if the ror message has already been cached
+      response = rorTableCache.get(refId);
+    } else {
+      // 1. send object request message to get the ror first
+      response = StubCompiler.requestRemoteReference(refId, Dispatcher.registryIp,
+              Dispatcher.registryPort);
+    }
 
     // 2. create a stub proxy according to the ror
     return StubCompiler.createStub(response, objClass);
