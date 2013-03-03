@@ -102,4 +102,29 @@ The Dispatcher maintains a object reference table, in which each reference is th
 InvocationRequestMessage, the Dispatcher would look up this table, get the actual reference and then call the method with the 
 argument list using the object reference. Then it would wrap the return result, which could be either the actual result or just a 
 RemoteException, into an InvocationResponseMessage, and send this message back to the client.
-	
+
+##Test Instances
+Two interfaces are provided:
+TestInterface1 has one method Integer add(Integer a, Integer b);
+TestInterface2 has one method Integer addAll(Integer[] args);
+
+TestClass implements the above two interfaces as well as the interface RemoteObject.
+add(Integer a, Integer b) returns the sum of the two arguments.
+addAll(Integer[] args) returns the sum of the integers in the array argument.
+
+##How to run
+
+First, compile the code at the root directory of the project by typing:
+	make compile
+
+Second, start a registry, using following command:
+	make registry PORT=12345
+(PORT is the port of the registry)
+
+Third, start a dispatcher, using following command:
+	make dispatcher DPORT=12346 RIP=127.0.0.1 RPORT=12345
+(DPORT is the port of the dispatcher, RIP is the ip of the registry, PORT is the port of the registry)
+
+Then, you can test the system with TestClient, by typing:
+	make testclient RIP=127.0.0.1 RPORT=12345
+(RIP is the ip of the registry, PORT is the port of the registry)
