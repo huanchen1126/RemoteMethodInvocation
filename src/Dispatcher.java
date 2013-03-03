@@ -43,8 +43,7 @@ public class Dispatcher implements Runnable {
 
     };
 
-    Class[] inters = { TestInterface.class };
-    if (this.registerObject("testobj", inters)) {
+    if (this.registerObject("testobj", testobj)) {
       this.addObject("testobj", testobj);
     } else {
       System.out.println("register failed");
@@ -105,9 +104,24 @@ public class Dispatcher implements Runnable {
    *          the interfaces this object implements
    * @return whether the object has been successfully registered.
    */
-  private boolean registerObject(String objId, Class[] interfaces) {
+  private boolean registerObject(String objId, Object obj) {
     if (objId == null)
       return false;
+
+    Class[] interfaces = obj.getClass().getInterfaces();
+    boolean isRemote = false;
+
+    // if the object does not
+    for (Class c : interfaces) {
+      if (c.equals(RemoteObject.class))
+        isRemote = true;
+    }
+
+    // if the object does not implement the RemoteObject interface,
+    // it can not be registered.
+    if (!isRemote) {
+      return false;
+    }
 
     try {
       Socket socket = new Socket(InetAddress.getByName(Dispatcher.registryIp),
@@ -116,10 +130,10 @@ public class Dispatcher implements Runnable {
       // generate a request message
       RemoteReferenceMessage request = new RemoteReferenceMessage(objId, socket.getLocalAddress()
               .getHostAddress(), this.port, interfaces);
-      
+
       // send this request
       CommunicationUtil.send(socket, request);
-      
+
       // block waiting for the response message
       ObjectRegisterAckMessage response = (ObjectRegisterAckMessage) CommunicationUtil
               .receive(socket);
