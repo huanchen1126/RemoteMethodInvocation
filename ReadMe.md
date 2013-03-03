@@ -1,7 +1,7 @@
 # Remote Method Invocation
 by Huanchen Zhang (huanchez), Mengwei Ding (mengweid)
 
-## 1. System Description
+## 1. Description
 
 
 In this system, we design and implement a Java RMI-like remote method call
