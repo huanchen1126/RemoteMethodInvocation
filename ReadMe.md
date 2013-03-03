@@ -115,16 +115,23 @@ addAll(Integer[] args) returns the sum of the integers in the array argument.
 ##How to run
 
 First, compile the code at the root directory of the project by typing:
+	
 	make compile
 
 Second, start a registry, using following command:
+	
 	make registry PORT=12345
+	
 (PORT is the port of the registry)
 
 Third, start a dispatcher, using following command:
+	
 	make dispatcher DPORT=12346 RIP=127.0.0.1 RPORT=12345
+	
 (DPORT is the port of the dispatcher, RIP is the ip of the registry, PORT is the port of the registry)
 
 Then, you can test the system with TestClient, by typing:
+	
 	make testclient RIP=127.0.0.1 RPORT=12345
+	
 (RIP is the ip of the registry, PORT is the port of the registry)
